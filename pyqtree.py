@@ -14,6 +14,15 @@ and extended for geospatial use.
 Python 2 and 3. 
 
 
+>>> def printall(self):
+...     for node in self.nodes:
+...             print node.item
+...             print node.rect
+...             print 
+...     for child in self.children:
+...             printall(child)
+
+
 ## Dependencies
 
 Pyqtree is written in pure Python and has no dependencies.
@@ -101,6 +110,17 @@ def _loopallchildren(parent):
                 yield subchild
         yield child
 
+"""
+def printall(self):
+    for node in self.nodes:
+        print node.item
+        print node.rect
+        print "\n"
+
+        for child in self.children:
+            printall(child)
+
+"""
 
 class _QuadNode(object):    
     def __init__(self, item, rect):
@@ -114,6 +134,11 @@ class _QuadNode(object):
 
     def hashcal(self):
         self.recompute_hash()
+
+    def printall(self):
+        print node.item
+        print node.rect
+        print "\n"
 
 
 
@@ -159,6 +184,20 @@ class _QuadTree(object):
 
             n.recompute_hash()
 
+    def printall(self):
+        for node in self.nodes:
+            print(node.item)
+            print(node.rect)
+            print("\n")
+
+        for child in self.children:
+
+            if child.children:
+                child.printall()
+
+
+
+
 
             
     def _insert(self, item, bbox):
@@ -184,33 +223,33 @@ class _QuadTree(object):
    
 
 
-    def _intersect(self, rect, results=None):
-        if results is None:
-            rect = _normalize_rect(rect)
-            results = set()
-        # search children
-        if self.children:
-            if rect[0] <= self.center[0]:
-                if rect[1] <= self.center[1]:
-                    self.children[0]._intersect(rect, results)
-                if rect[3] >= self.center[1]:
-                    self.children[1]._intersect(rect, results)
-            if rect[2] >= self.center[0]:
-                if rect[1] <= self.center[1]:
-                    self.children[2]._intersect(rect, results)
-                if rect[3] >= self.center[1]:
-                    self.children[3]._intersect(rect, results)
-        # search node at this level
-        for node in self.nodes:
-            if (node.rect[2] >= rect[0] and node.rect[0] <= rect[2] and 
-                node.rect[3] >= rect[1] and node.rect[1] <= rect[3]):
-                results.add(node.item)
-        return results
+        def _intersect(self, rect, results=None):
+            if results is None:
+                rect = _normalize_rect(rect)
+                results = set()
+            # search children
+            if self.children:
+                if rect[0] <= self.center[0]:
+                    if rect[1] <= self.center[1]:
+                        self.children[0]._intersect(rect, results)
+                    if rect[3] >= self.center[1]:
+                        self.children[1]._intersect(rect, results)
+                if rect[2] >= self.center[0]:
+                    if rect[1] <= self.center[1]:
+                        self.children[2]._intersect(rect, results)
+                    if rect[3] >= self.center[1]:
+                        self.children[3]._intersect(rect, results)
+            # search node at this level
+            for node in self.nodes:
+                if (node.rect[2] >= rect[0] and node.rect[0] <= rect[2] and 
+                    node.rect[3] >= rect[1] and node.rect[1] <= rect[3]):
+                    results.add(node.item)
+            return results
 
 
 
 
-    
+
     def _insert_into_children(self, item, rect):
         # if rect spans center then insert here
         if (rect[0] <= self.center[0] and rect[2] >= self.center[0] and
