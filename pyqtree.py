@@ -195,9 +195,6 @@ class _QuadTree(object):
                 child.printall()
 
 
-
-
-
             
     def _insert(self, item, bbox):
         rect = _normalize_rect(bbox)
@@ -222,28 +219,50 @@ class _QuadTree(object):
    
 
 
-        def _intersect(self, rect, results=None):
-            if results is None:
-                rect = _normalize_rect(rect)
-                results = set()
-            # search children
-            if self.children:
-                if rect[0] <= self.center[0]:
-                    if rect[1] <= self.center[1]:
-                        self.children[0]._intersect(rect, results)
-                    if rect[3] >= self.center[1]:
-                        self.children[1]._intersect(rect, results)
-                if rect[2] >= self.center[0]:
-                    if rect[1] <= self.center[1]:
-                        self.children[2]._intersect(rect, results)
-                    if rect[3] >= self.center[1]:
-                        self.children[3]._intersect(rect, results)
-            # search node at this level
-            for node in self.nodes:
-                if (node.rect[2] >= rect[0] and node.rect[0] <= rect[2] and 
-                    node.rect[3] >= rect[1] and node.rect[1] <= rect[3]):
-                    results.add(node.item)
-            return results
+    def _intersect(self, rect, results=None):
+        if results is None:
+            rect = _normalize_rect(rect)
+            results = set()
+        # search children
+        if self.children:
+            if rect[0] <= self.center[0]:
+                if rect[1] <= self.center[1]:
+                    self.children[0]._intersect(rect, results)
+                if rect[3] >= self.center[1]:
+                    self.children[1]._intersect(rect, results)
+            if rect[2] >= self.center[0]:
+                if rect[1] <= self.center[1]:
+                    self.children[2]._intersect(rect, results)
+                if rect[3] >= self.center[1]:
+                    self.children[3]._intersect(rect, results)
+        # search node at this level
+        for node in self.nodes:
+            if (node.rect[2] >= rect[0] and node.rect[0] <= rect[2] and 
+                node.rect[3] >= rect[1] and node.rect[1] <= rect[3]):
+                results.add(node.item)
+        return results
+
+    def _transfer(self,rect,newowner):
+        rect=_normalize_rect(rect)
+
+        if self.children:
+            if rect[0] <= self.center[0]:
+                if rect[1] <= self.center[1]:
+                    self.children[0]._transfer(rect, newowner)
+                if rect[3] >= self.center[1]:
+                    self.children[1]._transfer(rect, newowner)
+            if rect[2] >= self.center[0]:
+                if rect[1] <= self.center[1]:
+                    self.children[2]._transfer(rect, newowner)
+                if rect[3] >= self.center[1]:
+                    self.children[3]._transfer(rect, newowner)
+
+        for node in self.nodes:
+            if (node.rect[0] == rect[0] and node.rect[1] == rect[1] and 
+                node.rect[2] == rect[2] and node.rect[3] == rect[3]):
+
+                node.item=newowner
+
 
 
 
@@ -426,6 +445,9 @@ class Index(_QuadTree):
         - A list of inserted items whose bounding boxes intersect with the input bbox.
         """
         return self._intersect(bbox)
+
+    def transfer(self,bbox,newowner):
+        self._transfer(bbox,newowner)
 
 def main():
     spindex=Index(bbox=(0,0,10000,10000))
