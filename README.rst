@@ -1,12 +1,16 @@
-Pyqtree
+Property Records on the Blockchain
 =======
 
-Pyqtree is a pure Python spatial index for GIS or rendering usage. It
+Hybrid Quad Tree and Merkle tree for GIS 
+
+Adaption of Pyqtree which is 
+
+"Pyqtree is a pure Python spatial index for GIS or rendering usage. It
 stores and quickly retrieves items from a 2x2 rectangular grid area, and
 grows in depth and detail as more items are added. The actual quad tree
 implementation is adapted from `Matt Rasmussen's compbio
 library <https://github.com/mdrasmus/compbio/blob/master/rasmus/quadtree.py>`__
-and extended for geospatial use.
+and extended for geospatial use."
 
 Platforms
 ---------
