@@ -110,7 +110,7 @@ def _loopallchildren(parent):
                 yield subchild
         yield child
 
-"""
+
 def printall(self):
     for node in self.nodes:
         print node.item
@@ -120,7 +120,6 @@ def printall(self):
         for child in self.children:
             printall(child)
 
-"""
 
 class _QuadNode(object):    
     def __init__(self, item, rect):
