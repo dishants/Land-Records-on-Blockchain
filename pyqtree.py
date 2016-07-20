@@ -9,57 +9,9 @@ The actual quad tree implementation is adapted from
 and extended for geospatial use.
 
 
-## Platforms
-
-Python 2 and 3. 
-
-
->>> def printall(self):
-...     for node in self.nodes:
-...             print node.item
-...             print node.rect
-...             print 
-...     for child in self.children:
-...             printall(child)
-
-
-## Dependencies
-
-Pyqtree is written in pure Python and has no dependencies.
-
-
-## Installing It
-
-Installing Pyqtree can be done by opening your terminal or commandline and typing:
-
-    pip install pyqtree
-
-Alternatively, you can simply download the "pyqtree.py" file and place
-it anywhere Python can import it, such as the Python site-packages folder.
-
-
-## Example Usage
-
-Start your script by importing the quad tree.
-
     from pyqtree import Index
-
-Setup the spatial index, giving it a bounding box area to keep track of.
-The bounding box being in a four-tuple: (xmin, ymin, xmax, ymax).
-
     spindex = Index(bbox=(0, 0, 100, 100))
-
-Populate the index with items that you want to be retrieved at a later point,
-along with each item's geographic bbox.
-
-    # this example assumes you have a list of items with bbox attribute
-    for item in items:
-        spindex.insert(item, item.bbox)
-
-Then when you have a region of interest and you wish to retrieve items from that region,
-just use the index's intersect method. This quickly gives you a list of the stored items
-whose bboxes intersects your region of interests. 
-
+    spindex.insert(item, item.bbox)
     overlapbbox = (51, 51, 86, 86)
     matches = spindex.intersect(overlapbbox)
 
@@ -81,6 +33,7 @@ This code is free to share, use, reuse, and modify according to the MIT license,
 
 - Karim Bahgat (2015)
 - Joschua Gandert (2016)
+- Merkle Tree- Dishant Shah
 
 """
 
