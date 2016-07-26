@@ -1,5 +1,9 @@
 """
-# Pyqtree
+
+Property Records on the Blockchain
+This is an extension of the Pyqtree.
+It has a hybrid Merkle and Quad Tree structure.
+
 
 Pyqtree is a pure Python spatial index for GIS or rendering usage.
 It stores and quickly retrieves items from a 2x2 rectangular grid area,
@@ -74,6 +78,14 @@ def printall(self):
             printall(child)
 
 
+def printallhash(self):
+    for node in self.nodes:
+        print node.hash
+
+        for child in self.children:
+            printallhash(child)
+
+
 class _QuadNode(object):    
     def __init__(self, item, rect):
         self.item = item
@@ -121,7 +133,7 @@ class _QuadTree(object):
     def hashcal(self):
         for child in self.children:
             if child.children:
-                hashcal(child)
+                child.hashcal()
 
 
             if child.nodes:
