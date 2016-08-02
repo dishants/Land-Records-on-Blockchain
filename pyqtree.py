@@ -1,3 +1,5 @@
+import requests 
+
 """
 
 Property Records on the Blockchain
@@ -434,6 +436,33 @@ def test():
     sp=Index(bbox=(0,0,20,20))
     for i in range(20):
         sp.insert(i,(i,i,i+1,i+1))
+import requests
+
+def insertontoblockchain(data):
+    issueurl= 'http://testnet.api.coloredcoins.org:80/v3/issue'
+    funded_address='moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq'
+    asset={'issueAddress':funded_address,'amount': 1,'divisibility': 0,'fee': 5000,'reissueable':'false'}
+    r=requests.post(issueurl,data=asset)
+    reply=r.json()
+    issuehash=reply['txHex']
+    print issuehash
+
+def broadcast(hexdata):
+    broadcasturl= 'http://testnet.api.coloredcoins.org:80/v3/broadcast'
+    r=requests.post(broadcasturl,data={'txHex':hexdata})
+    response=r.json()
+    print response
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
