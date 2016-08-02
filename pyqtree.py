@@ -1,4 +1,7 @@
 import requests 
+import sys
+from Naked.toolshed.shell import muterun_js
+import re
 
 """
 
@@ -436,7 +439,7 @@ def test():
     sp=Index(bbox=(0,0,20,20))
     for i in range(20):
         sp.insert(i,(i,i,i+1,i+1))
-import requests
+
 
 def insertontoblockchain(data):
     issueurl= 'http://testnet.api.coloredcoins.org:80/v3/issue'
@@ -447,35 +450,13 @@ def insertontoblockchain(data):
     issuehash=reply['txHex']
     print issuehash
 
-def sign():
-    """
 
-    NODEJS Code ->convert to python
+def signatransaction(inputstuff):
+    response=muterun_js("sign_transaction.js",inputstuff)
+    print response.stdout
+    regex=r"\[(.*?)\]"
+    matchobj=re.search(regex,response.stdout)
 
-var bitcoin = require('bitcoinjs-lib');
-
-function signTx (unsignedTx, wif) {
-    var privateKey = bitcoin.ECKey.fromWIF(wif)
-    var tx = bitcoin.Transaction.fromHex(unsignedTx)
-    var insLength = tx.ins.length
-    console.log(insLength)
-    for (var i = 0; i < insLength; i++) {
-        tx.sign(i, privateKey)
-    }
-    return tx.toHex()
-}
-
-var key = 'L3fUpJPYjCAdNUiYy7auBXfcWGG5pJ8EqqNdxxdxVsGpS4PBjuWZ'
-// e.g. var key = 'KzH9zdXm95Xv3z7oNxzM6HqSPUiQbuyKoFdQBTf3HKx1B6eYdbAn';
-var txHex = '010000000192deb952db54bec2a20ce0055c1fa2dbd8fe603337617eeb40274829cb7821610100000000ffffffff020000000000000000086a064343020501107810f400000000001976a91457f0309b1fb4e184d4fa56a18f9aee0cca05f47f88ac00000000';
-// e.g. txHex = '0100000001e0cd69ce93aded7a8d51063ed5f7bb5c9cdcc885a93fa629574dedb2cd5b48ad0100000000ffffffff020000000000000000086a06434301050110b8820100000000001976a914ea55c2430dca31e56ef5ae55c2863dae65df908688ac00000000'
-
-var signedTxHex = signTx(txHex, key);
-console.log("signedTxHex: ["+signedTxHex+"]");
-
-
-
-    """
 
 def broadcast(hexdata):
     broadcasturl= 'http://testnet.api.coloredcoins.org:80/v3/broadcast'
