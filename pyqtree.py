@@ -441,21 +441,20 @@ def test():
         sp.insert(i,(i,i,i+1,i+1))
 
 
-def insertontoblockchain(data):
+def insertontoblockchain(what):
     issueurl= 'http://testnet.api.coloredcoins.org:80/v3/issue'
     funded_address='moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq'
     asset={'issueAddress':funded_address,'amount': 1,'divisibility': 0,'fee': 5000,'reissueable':'false'}
     r=requests.post(issueurl,data=asset)
     reply=r.json()
     issuehash=reply['txHex']
-    print issuehash
-
+    print(issuehash)
 
 def signatransaction(inputstuff):
     response=muterun_js("sign_transaction.js",inputstuff)
-    print response.stdout
     regex=r"\[(.*?)\]"
     matchobj=re.search(regex,response.stdout)
+    print (matchobj.group(1))
 
 
 def broadcast(hexdata):
@@ -463,6 +462,21 @@ def broadcast(hexdata):
     r=requests.post(broadcasturl,data={'txHex':hexdata})
     response=r.json()
     print response
+
+
+"""THIS IS THE MAIN INSERT FUNCTION"""
+def completeinsert():
+    issueurl= 'http://testnet.api.coloredcoins.org:80/v3/issue'
+    funded_address='moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq'
+    asset={'issueAddress':funded_address,'amount': 1,'divisibility': 0,'fee': 5000,'reissueable':'false'}
+    r=requests.post(issueurl,data=asset)
+    reply=r.json()
+    issuehash=reply['txHex']
+    response=muterun_js("sign_transaction.js",issuehash)
+    regex=r"\[(.*?)\]"
+    matchobj=re.search(regex,response.stdout)
+    broadcast(matchobj.group(1))
+
 
 
 
