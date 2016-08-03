@@ -2,6 +2,7 @@ import requests
 import sys
 from Naked.toolshed.shell import muterun_js
 import re
+import json
 
 """
 
@@ -420,36 +421,53 @@ class Index(_QuadTree):
         self._transfer(bbox,newowner)
 
 def main():
-    spindex=Index(bbox=(0,0,10000,10000))
-    while(True):
-        print "enter property name "
-        propertyname=str(raw_input())
-        print "Enter property dimensions in tuple format"
-        dimensions=tuple(int(x.strip()) for x in raw_input().split(','))
-        result=spindex.intersect(dimensions)
-        if not result:
-            spindex.insert(propertyname,dimensions)
-            print ("Property Sucessfully inserted"+str(dimensions)+propertyname)
-            spindex.hashcal()
-        else:
-            print ("There is an intersection with")
-            print ([i for i in result])
+    print "enter property name "
+    propertyname=str(raw_input())
+    print "Enter property dimensions in tuple format"
+    dimensions=tuple(int(x.strip()) for x in raw_input().split(','))
+    result=spindex.intersect(dimensions)
+    if not result:
+        a=[str(spindex.hash),str(dimensions),str(propertyname)]
+        b":".join(a)
+        insertthroughnodejs(b):
+        spindex.insert(propertyname,dimensions)
+        print ("Property Sucessfully inserted"+str(dimensions)+propertyname)
+        spindex.hashcal()
+    else:
+        print ("There is an intersection with")
+        print ([i for i in result])
 
 def test():
     sp=Index(bbox=(0,0,20,20))
     for i in range(20):
         sp.insert(i,(i,i,i+1,i+1))
 
-
+##THIS IS A TEST INSERTION FUNCTION
 def insertontoblockchain(what):
     issueurl= 'http://testnet.api.coloredcoins.org:80/v3/issue'
     funded_address='moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq'
-    asset={'issueAddress':funded_address,'amount': 1,'divisibility': 0,'fee': 5000,'reissueable':'false'}
+    metadata= {
+        'assetId': '2',
+        'assetName': 'Dishant',
+        'issuer': 'Genius',
+        'description': '0,0,5,5 Hash 20fd37c942f0f95b0a2215f336ba298438f3a0a5b11e6ae9c4f71ecb'}
+
+    metadata1=json.dumps(metadata)
+    asset = {
+    'issueAddress': 'moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq',
+    'amount': 1,
+    'divisibility': 0,
+    'fee': 5000,
+    'reissueable':'false',
+    'metadata' : a}
     r=requests.post(issueurl,data=asset)
     reply=r.json()
-    issuehash=reply['txHex']
-    print(issuehash)
+    print(reply)
+    """issuehash=reply['txHex']
+    print(issuehash)"""
 
+
+##THIS IS A TEST SIGNING FUNCTION
 def signatransaction(inputstuff):
     response=muterun_js("sign_transaction.js",inputstuff)
     regex=r"\[(.*?)\]"
@@ -468,14 +486,37 @@ def broadcast(hexdata):
 def completeinsert():
     issueurl= 'http://testnet.api.coloredcoins.org:80/v3/issue'
     funded_address='moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq'
-    asset={'issueAddress':funded_address,'amount': 1,'divisibility': 0,'fee': 5000,'reissueable':'false'}
-    r=requests.post(issueurl,data=asset)
+
+    assetin= {
+    'issueAddress': 'moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq',
+    'amount': 1,
+    'divisibility': 0,
+    'fee': 5000,
+    'reissueable':'false',
+    'metadata': '2',
+    'assetName': 'Dishant',
+    'issuer': 'Genius',
+    'description': '0,0,5,5 Hash 20fd37c942f0f95b0a2215f336ba298438f3a0a5b11e6ae9c4f71ecb'
+    }
+
+    r=requests.post(issueurl,data=assetin)
     reply=r.json()
     issuehash=reply['txHex']
+    asset=reply['assetId']
+
     response=muterun_js("sign_transaction.js",issuehash)
     regex=r"\[(.*?)\]"
     matchobj=re.search(regex,response.stdout)
     broadcast(matchobj.group(1))
+    print(asset)
+
+def insertthroughnodejs(a):
+    response=muterun_js("transaction.js",a)
+    return response.stdout
+    ##regex=r"\[(.*?)\]"
+    ##matchobj=re.search(regex,response.stdout)
+    ##print (matchobj.group(1))
+
 
 
 
