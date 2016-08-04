@@ -1,6 +1,6 @@
 import requests 
 import sys
-from Naked.toolshed.shell import muterun_js
+from Naked.toolshed.shell import muterun_js,execute_js
 import re
 import json
 
@@ -421,15 +421,21 @@ class Index(_QuadTree):
         self._transfer(bbox,newowner)
 
 def main():
+    spindex=Index(bbox=(0,0,1000,1000))
+    spindex.hash="000"
     print "enter property name "
     propertyname=str(raw_input())
     print "Enter property dimensions in tuple format"
-    dimensions=tuple(int(x.strip()) for x in raw_input().split(','))
+    unformedinput=raw_input()
+    dimensions=tuple(int(x.strip()) for x in unformedinput.split(','))
     result=spindex.intersect(dimensions)
     if not result:
-        a=[str(spindex.hash),str(dimensions),str(propertyname)]
-        b":".join(a)
-        insertthroughnodejs(b):
+        a=[str(spindex.hash),str(unformedinput),str(propertyname)]
+        b=":".join(a)
+        b=str(b)
+        print(type(b))
+        response=muterun_js("transaction.js",b)
+        print response.stdout
         spindex.insert(propertyname,dimensions)
         print ("Property Sucessfully inserted"+str(dimensions)+propertyname)
         spindex.hashcal()
@@ -511,7 +517,9 @@ def completeinsert():
     print(asset)
 
 def insertthroughnodejs(a):
+    print("Going through the insertion function")
     response=muterun_js("transaction.js",a)
+    print (response.stdout)
     return response.stdout
     ##regex=r"\[(.*?)\]"
     ##matchobj=re.search(regex,response.stdout)

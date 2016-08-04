@@ -1,4 +1,4 @@
-send_asset = {
+asset = {
     'issueAddress': 'moXvpRmNQXkfpggXmQGvE3gbp3QyM9cpdq',
     'amount': 1,
     'divisibility': 0,
