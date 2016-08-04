@@ -21,9 +21,10 @@ function postToApi(api_endpoint, json_data, callback) {
 
         var txHex=body.txHex
         var assetid=body.assetId
-        console.log("AssetID");
-        console.log(assetid);
-        console.log("AssetEND")
+
+        console.log("AssetID" + assetid + "AssetEND");
+        //console.log(assetid);
+        //console.log("AssetEND")
         var signedTxHex = signTx(txHex, key);
         var transaction = {'txHex': signedTxHex}
 
@@ -31,7 +32,8 @@ function postToApi(api_endpoint, json_data, callback) {
     if (err) {
         
         console.log('error: ', err);
-             }
+             } 
+
 });
 
 

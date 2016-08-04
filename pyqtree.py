@@ -370,7 +370,7 @@ class Index(_QuadTree):
         """
         self._insert(item, bbox)
 
-
+######THIS IS THE ABSOLOUTE MAIN FUNCTION############
     def insertblock(self,item,bbox):
 
         dim=str(bbox).strip("()")
@@ -386,10 +386,10 @@ class Index(_QuadTree):
             print(type(b))
             print b
             b=b.replace(' ','-')
-
-            response=execute_js("transaction.js",b)
-            #print response.stdout
-            self.insert("rand",bbox)
+            response=muterun_js("transaction.js",b)
+            test1=re.match("AssetID(.*)AssetEND",response.stdout)
+            Obtained_Asset_ID=test1.group(1)
+            self.insert(Obtained_Asset_ID,bbox)
             print ("Property Sucessfully inserted"+str(dim))
             self.hashcal()
         else:
@@ -397,7 +397,7 @@ class Index(_QuadTree):
             print ([i for i in result])
 
 
-
+#######ALWAYS CALL THIS ##############
     def intersect(self, bbox):
         """
         Intersects an input boundingbox rectangle with all of the items
@@ -513,10 +513,14 @@ def insertthroughnodejs(a):
     print("Going through the insertion function")
     response=muterun_js("transaction.js",a)
     print (response.stdout)
-    return response.stdout
-    ##regex=r"\[(.*?)\]"
-    ##matchobj=re.search(regex,response.stdout)
-    ##print (matchobj.group(1))
+    test1=re.match("AssetID(.*)AssetEND",response.stdout)
+    print test1.group(1)
+    Obtained_Asset_ID=test.group(1)
+    #test2=re.match("AssetID(.*)AssetEND",response.stdout)
+
+    #regex=r"\[(.*?)\]"
+    #matchobj=re.search(regex,response.stdout)
+    #print (matchobj.group(1))
 
 
 
