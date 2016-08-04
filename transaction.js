@@ -94,7 +94,7 @@ var asset = {
     fee: 5000,    
     metadata:  { assetName: 'land',
       issuer: 'Government of UCL',
-      description: 'Fugiat ipsum sunt amet reprehenderit irure.',
+      description: 'This is a land asset',
       userData: 
        { meta: 
           [ { key: 'Hash', value: arr[0], type: 'String' },

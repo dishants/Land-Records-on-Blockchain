@@ -6,44 +6,10 @@ import json
 
 """
 
-Property Records on the Blockchain
-This is an extension of the Pyqtree.
-It has a hybrid Merkle and Quad Tree structure.
-
-
-Pyqtree is a pure Python spatial index for GIS or rendering usage.
-It stores and quickly retrieves items from a 2x2 rectangular grid area,
-and grows in depth and detail as more items are added. 
-The actual quad tree implementation is adapted from
-[Matt Rasmussen's compbio library](https://github.com/mdrasmus/compbio/blob/master/rasmus/quadtree.py)
-and extended for geospatial use.
-
-
-    from pyqtree import Index
     spindex = Index(bbox=(0, 0, 100, 100))
     spindex.insert(item, item.bbox)
     overlapbbox = (51, 51, 86, 86)
     matches = spindex.intersect(overlapbbox)
-
-There are other things that can be done as well, but that's it for the main usage!
-
-
-## More Information:
-
-- [Home Page](http://github.com/karimbahgat/Pyqtree)
-- [API Documentation](http://pythonhosted.org/Pyqtree)
-
-
-## License:
-
-This code is free to share, use, reuse, and modify according to the MIT license, see LICENSE.txt.
-
-
-## Credits:
-
-- Karim Bahgat (2015)
-- Joschua Gandert (2016)
-- Merkle Tree- Dishant Shah
 
 """
 
@@ -419,6 +385,7 @@ class Index(_QuadTree):
             b=str(b)
             print(type(b))
             print b
+            b=b.replace(' ','-')
 
             response=execute_js("transaction.js",b)
             #print response.stdout
@@ -526,10 +493,9 @@ def completeinsert():
     'divisibility': 0,
     'fee': 5000,
     'reissueable':'false',
-    'metadata': '2',
-    'assetName': 'Dishant',
-    'issuer': 'Genius',
-    'description': '0,0,5,5 Hash 20fd37c942f0f95b0a2215f336ba298438f3a0a5b11e6ae9c4f71ecb'
+    'metadata.assetName': 'Dishant',
+    'metadata.issuer': 'Genius',
+    'metadata.description': '0,0,5,5 Hash 20fd37c942f0f95b0a2215f336ba298438f3a0a5b11e6ae9c4f71ecb'
     }
 
     r=requests.post(issueurl,data=assetin)
@@ -551,18 +517,6 @@ def insertthroughnodejs(a):
     ##regex=r"\[(.*?)\]"
     ##matchobj=re.search(regex,response.stdout)
     ##print (matchobj.group(1))
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
