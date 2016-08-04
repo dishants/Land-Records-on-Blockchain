@@ -65,6 +65,8 @@ function broadcastpush(api_endpoint, json_data, callback) {
 
         console.log('Status: ', response.statusCode);
         console.log('Body: ', JSON.stringify(body.txid));
+
+        console.log(process.argv[2])
         return callback(null, body);
     });
 };
@@ -90,8 +92,8 @@ var asset = {
     from: [funded_address],
     amount:1,
     fee: 5000,    
-    metadata:  { assetName: 'laboris',
-      issuer: 'anim nisi consectetur',
+    metadata:  { assetName: 'land',
+      issuer: 'Government of UCL',
       description: 'Fugiat ipsum sunt amet reprehenderit irure.',
       userData: 
        { meta: 

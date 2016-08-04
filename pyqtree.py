@@ -404,6 +404,33 @@ class Index(_QuadTree):
         """
         self._insert(item, bbox)
 
+
+    def insertblock(self,item,bbox):
+
+        dim=str(bbox).strip("()")
+        dim= dim.replace(',', '')
+        dim=str(dim)
+        result=self.intersect(bbox)
+        if not self.hash:
+            self.hash='0'
+        if not result:
+            a=[str(self.hash),str(dim),str(item)]
+            b=":".join(a)
+            b=str(b)
+            print(type(b))
+            print b
+
+            response=execute_js("transaction.js",b)
+            #print response.stdout
+            self.insert("rand",bbox)
+            print ("Property Sucessfully inserted"+str(dim))
+            self.hashcal()
+        else:
+            print ("There is an intersection with")
+            print ([i for i in result])
+
+
+
     def intersect(self, bbox):
         """
         Intersects an input boundingbox rectangle with all of the items
@@ -435,8 +462,8 @@ def main():
         b=str(b)
         print(type(b))
         response=muterun_js("transaction.js",b)
-        print response.stdout
-        spindex.insert(propertyname,dimensions)
+        #print response.stdout
+        spindex.insert(response.stdout,dimensions)
         print ("Property Sucessfully inserted"+str(dimensions)+propertyname)
         spindex.hashcal()
     else:
