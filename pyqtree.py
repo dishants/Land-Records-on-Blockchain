@@ -415,14 +415,22 @@ class Index(_QuadTree):
 
     def split(self,bbox1,bbox2,bbox3):
         ##Here would be a checking algorithm to ensure correctness
-        self._delete(bbox1)
-        self._insert("split1",bbox2)
-        self._insert("split2",bbox3)
+        ##Split bbox1 into bbox2 and bbox3
+        combineverifierbox=joinverifier(bbox2,bbox3)
+        if combineverifierbox==bbox1:
+            print "Verified True Split"
+            self._delete(bbox1)
+            self._insert("split1",bbox2)
+            self._insert("split2",bbox3)
 
     def merge(self,bbox1,bbox2,bbox3):
-        self._delete(bbox2)
-        self._delete(bbox3)
-        self._insert("mergedbox",bbox1)
+        newbox=joinverifier(bbox1,bbox2)
+        if newbox==bbox3:
+            print "Verified True Merge"
+
+            self._delete(bbox1)
+            self._delete(bbox2)
+            self._insert("mergedbox",bbox3)
 
 
 ######THIS IS THE ABSOLOUTE MAIN FUNCTION############
@@ -591,7 +599,6 @@ def joinverifier(bbox1,bbox2,bbox3=(0,0,0,0)):
         newy2=ay2
 
         netbox=(newx1,newy1,newx2,newy2)
-        print (netbox==bbox3)
         return netbox
 
     if ((ax1==bx1) and (ax2==bx2)):
@@ -603,7 +610,6 @@ def joinverifier(bbox1,bbox2,bbox3=(0,0,0,0)):
         newx2=ax2
 
         netbox=(newx1,newy1,newx2,newy2)
-        print (netbox==bbox3)
         return netbox
 
 
