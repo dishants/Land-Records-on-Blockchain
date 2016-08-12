@@ -424,6 +424,7 @@ class Index(_QuadTree):
         self._delete(bbox3)
         self._insert("mergedbox",bbox1)
 
+
 ######THIS IS THE ABSOLOUTE MAIN FUNCTION############
     def insertblock(self,item,bbox):
 
@@ -575,6 +576,45 @@ def insertthroughnodejs(a):
     #regex=r"\[(.*?)\]"
     #matchobj=re.search(regex,response.stdout)
     #print (matchobj.group(1))
+
+
+def joinverifier(bbox1,bbox2,bbox3=(0,0,0,0)):
+    (ax1,ay1,ax2,ay2)=bbox1
+    (bx1,by1,bx2,by2)=bbox2
+
+    if ((ay1==by1) and (ay2==by2)):
+        xcoords=[ax1,ax2,bx1,bx2]
+        xcoords.sort()
+        newx1=xcoords[0]
+        newx2=xcoords[3]
+        newy1=ay1
+        newy2=ay2
+
+        netbox=(newx1,newy1,newx2,newy2)
+        print (netbox==bbox3)
+        return netbox
+
+    if ((ax1==bx1) and (ax2==bx2)):
+        ycoords=[ay1,ay2,by1,by2]
+        ycoords.sort()
+        newy1=ycoords[0]
+        newy2=ycoords[3]
+        newx1=ax1
+        newx2=ax2
+
+        netbox=(newx1,newy1,newx2,newy2)
+        print (netbox==bbox3)
+        return netbox
+
+
+
+
+
+
+
+
+
+
 
 
 
