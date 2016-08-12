@@ -44,6 +44,7 @@ def printall(self):
     for node in self.nodes:
         print node.item
         print node.rect
+        print node.hash
         print "\n"
 
         for child in self.children:
@@ -59,10 +60,12 @@ def printallhash(self):
 
 
 class _QuadNode(object):    
-    def __init__(self, item, rect):
+    def __init__(self, item, rect,parent):
         self.item = item
         self.rect = rect
         self.hash=''
+        self.parent=parent
+
     def recompute_hash(self):
         self.hash=hashlib.sha224(str(self.rect)).hexdigest()
         print "Computing hash of Node"
@@ -87,7 +90,7 @@ class _QuadTree(object):
     user-friendly version.
     """
     
-    def __init__(self, x, y, width, height, max_items, max_depth, _depth=0):
+    def __init__(self, x, y, width, height, max_items, max_depth,parent, _depth=0):
         self.nodes = []
         self.children = []
         self.center = (x, y)
@@ -96,6 +99,7 @@ class _QuadTree(object):
         self.max_depth = max_depth
         self._depth = _depth
         self.hash=""
+        self.parent=parent
 
         
     def __iter__(self):
@@ -124,6 +128,7 @@ class _QuadTree(object):
         for node in self.nodes:
             print(node.item)
             print(node.rect)
+            print(node.hash)
             print("\n")
 
         for child in self.children:
@@ -136,7 +141,7 @@ class _QuadTree(object):
     def _insert(self, item, bbox):
         rect = _normalize_rect(bbox)
         if len(self.children) == 0:
-            node = _QuadNode(item, rect)
+            node = _QuadNode(item, rect,self)
             self.nodes.append(node)
             print "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print("Appended the QuadNode to the tree --Line 141")
@@ -179,6 +184,30 @@ class _QuadTree(object):
                 results.add(node.item)
         return results
 
+
+    def _delete(self, rect, results=None):
+        if results is None:
+            rect = _normalize_rect(rect)
+            results = set()
+        # search children
+        if self.children:
+            if rect[0] <= self.center[0]:
+                if rect[1] <= self.center[1]:
+                    self.children[0]._delete(rect, results)
+                if rect[3] >= self.center[1]:
+                    self.children[1]._delete(rect, results)
+            if rect[2] >= self.center[0]:
+                if rect[1] <= self.center[1]:
+                    self.children[2]._delete(rect, results)
+                if rect[3] >= self.center[1]:
+                    self.children[3]._delete(rect, results)
+        # search node at this level
+        for node in self.nodes:
+            if (node.rect[0] == rect[0] and node.rect[1] == rect[1] and node.rect[2] == rect[2] and node.rect[3] == rect[3]):
+                print ("deleting"+str(node.item))
+                self.nodes.remove(node)
+
+
     def _transfer(self,rect,newowner):
         rect=_normalize_rect(rect)
 
@@ -209,7 +238,7 @@ class _QuadTree(object):
         # if rect spans center then insert here
         if (rect[0] <= self.center[0] and rect[2] >= self.center[0] and
             rect[1] <= self.center[1] and rect[3] >= self.center[1]):
-            node = _QuadNode(item, rect)
+            node = _QuadNode(item, rect,self)
             print " Start of --------------------------------------------------------------"
             print "This is insertintocildren and here the QuadNode is being appended to it"
             self.nodes.append(node)
@@ -255,13 +284,13 @@ class _QuadTree(object):
         y2 = self.center[1] + quartheight
         new_depth = self._depth + 1
         self.children = [_QuadTree(x1, y1, halfwidth, halfheight,
-                                   self.max_items, self.max_depth, new_depth),
+                                   self.max_items, self.max_depth, self,new_depth),
                          _QuadTree(x1, y2, halfwidth, halfheight,
-                                   self.max_items, self.max_depth, new_depth),
+                                   self.max_items, self.max_depth, self,new_depth),
                          _QuadTree(x2, y1, halfwidth, halfheight,
-                                   self.max_items, self.max_depth, new_depth),
+                                   self.max_items, self.max_depth, self,new_depth),
                          _QuadTree(x2, y2, halfwidth, halfheight,
-                                   self.max_items, self.max_depth, new_depth)]
+                                   self.max_items, self.max_depth, self,new_depth)]
         nodes = self.nodes
         print "The actual splitting operation"
         self.nodes = []
@@ -352,10 +381,10 @@ class Index(_QuadTree):
             x1, y1, x2, y2 = bbox
             width, height = abs(x2-x1), abs(y2-y1)
             midx, midy = x1+width/2.0, y1+height/2.0
-            super(Index, self).__init__(midx, midy, width, height, max_items, max_depth)
+            super(Index, self).__init__(midx, midy, width, height, max_items, max_depth,None,2)
 
         elif all(x, y, width, height):
-            super(Index, self).__init__(x, y, width, height, max_items, max_depth)
+            super(Index, self).__init__(x, y, width, height, max_items, max_depth,None)
 
         else:
             raise Exception("Either the bbox argument must be set, or the x, y, width, and height arguments must be set")
@@ -369,6 +398,9 @@ class Index(_QuadTree):
         - **bbox**: The spatial bounding box tuple of the item, with four members (xmin,ymin,xmax,ymax)
         """
         self._insert(item, bbox)
+
+    def delete(self,bbox):
+        return self._delete(bbox)
 
 ######THIS IS THE ABSOLOUTE MAIN FUNCTION############
     def insertblock(self,item,bbox):
