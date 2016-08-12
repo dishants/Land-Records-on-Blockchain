@@ -11,6 +11,15 @@ import json
     overlapbbox = (51, 51, 86, 86)
     matches = spindex.intersect(overlapbbox)
 
+    def recursivehash(node):
+...     if(node.parent):
+...             recursivehash(node.parent)
+...     for child in node.nodes:
+...             print (child.hash)
+...     for ch in node.children:
+...             print ch.hash
+
+
 """
 
 __version__ = "0.25.0"
@@ -44,7 +53,8 @@ def printall(self):
     for node in self.nodes:
         print node.item
         print node.rect
-        print node.hash
+        if node.hash:
+            print node.hash
         print "\n"
 
         for child in self.children:
@@ -204,7 +214,8 @@ class _QuadTree(object):
         # search node at this level
         for node in self.nodes:
             if (node.rect[0] == rect[0] and node.rect[1] == rect[1] and node.rect[2] == rect[2] and node.rect[3] == rect[3]):
-                print ("deleting"+str(node.item))
+                print ("deleting")
+                print(str(node.item))
                 self.nodes.remove(node)
 
 
@@ -401,6 +412,17 @@ class Index(_QuadTree):
 
     def delete(self,bbox):
         return self._delete(bbox)
+
+    def split(self,bbox1,bbox2,bbox3):
+        ##Here would be a checking algorithm to ensure correctness
+        self._delete(bbox1)
+        self._insert("split1",bbox2)
+        self._insert("split2",bbox3)
+
+    def merge(self,bbox1,bbox2,bbox3):
+        self._delete(bbox2)
+        self._delete(bbox3)
+        self._insert("mergedbox",bbox1)
 
 ######THIS IS THE ABSOLOUTE MAIN FUNCTION############
     def insertblock(self,item,bbox):
