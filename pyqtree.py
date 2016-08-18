@@ -48,17 +48,31 @@ def _loopallchildren(parent):
                 yield subchild
         yield child
 
-
 def printall(self):
+    
     for node in self.nodes:
         print node.item
-        print node.rect
-        if node.hash:
-            print node.hash
-        print "\n"
-
+        #print node.rect
+        #if node.hash:
+        #    print node.hash
+        #print "\n"
+        #print "---Subprocess"
         for child in self.children:
             printall(child)
+        #print "Subprocess end "
+
+    #print count
+
+##This is just to print the hashes to make sure the hashing works correctly
+def recursivehashmain(node):
+        if (node.parent):
+            recursivehashmain(node.parent)
+        print "-----------------"
+        for child in node.nodes:
+            print child.hash
+        for children in node.children:
+            print children.hash
+        print "-----------------"
 
 
 def printallhash(self):
@@ -75,6 +89,7 @@ class _QuadNode(object):
         self.rect = rect
         self.hash=''
         self.parent=parent
+        self.prehash=''
 
     def recompute_hash(self):
         self.hash=hashlib.sha224(str(self.rect)).hexdigest()
@@ -83,6 +98,8 @@ class _QuadNode(object):
 
     def hashcal(self):
         self.recompute_hash()
+        if self.parent:
+            self.parent.hashcal()
 
     def printall(self):
         print node.item
@@ -109,6 +126,7 @@ class _QuadTree(object):
         self.max_depth = max_depth
         self._depth = _depth
         self.hash=""
+        self.prehash=""
         self.parent=parent
 
         
@@ -116,6 +134,13 @@ class _QuadTree(object):
         for child in _loopallchildren(self):
             yield child
 
+
+    def hashcal(self):
+        self.recompute_hash()
+        if self.parent:
+            self.parent.hashcal()
+
+    """
     def hashcal(self):
         for child in self.children:
             if child.children:
@@ -133,18 +158,21 @@ class _QuadTree(object):
         for n in self.nodes:
 
             n.recompute_hash()
-
+    """
     def printall(self):
+        count=0
         for node in self.nodes:
             print(node.item)
             print(node.rect)
             print(node.hash)
             print("\n")
+            count=count+1
 
         for child in self.children:
 
             if child.children:
                 child.printall()
+        print count
 
 
             
@@ -153,6 +181,10 @@ class _QuadTree(object):
         if len(self.children) == 0:
             node = _QuadNode(item, rect,self)
             self.nodes.append(node)
+
+            node.recompute_hash()
+            self.hashcal()
+
             print "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print("Appended the QuadNode to the tree --Line 141")
             print rect
@@ -250,9 +282,11 @@ class _QuadTree(object):
         if (rect[0] <= self.center[0] and rect[2] >= self.center[0] and
             rect[1] <= self.center[1] and rect[3] >= self.center[1]):
             node = _QuadNode(item, rect,self)
+            node.recompute_hash()
             print " Start of --------------------------------------------------------------"
             print "This is insertintocildren and here the QuadNode is being appended to it"
             self.nodes.append(node)
+            node.hashcal()
         else:
             # try to insert into children
             if rect[0] <= self.center[0]:
@@ -335,14 +369,47 @@ class _QuadTree(object):
             child_hashes+=child.hash
         for nodes in self.nodes:
             node_hashes+=nodes.hash
-        individualnodehash
 
-        nethash=child_hashes+node_hashes+str(self.center)
+        nethash=child_hashes+node_hashes
 
         if isinstance(self,_QuadNode):
             self.hash=hashlib.sha224(str(self.rect)).hexdigest()
         else:
             self.hash=hashlib.sha224(nethash).hexdigest()
+            self.prehash=nethash
+
+
+    def _recursivehash(self):
+        if (self.parent):
+            self.parent._recursivehash()
+        print "-----------------"
+        overallhash=""
+        child_hashes=""
+        node_hashes=""
+
+        for children in self.children:
+            child_hashes+=children.hash
+            print children.hash
+
+        for child in self.nodes:
+            node_hashes+=child.hash
+            print child.hash
+
+        print ("To verify the hash is")
+        overallhash=child_hashes+node_hashes
+        print overallhash
+        hashcomp=hashlib.sha224(overallhash).hexdigest()
+        print("--")
+        print hashcomp
+        if (self.hash==hashcomp):
+            print "Hash Verified"
+
+
+
+
+
+        print "-----------------"
+
 
 
 MAX_ITEMS = 10
@@ -432,6 +499,9 @@ class Index(_QuadTree):
             self._delete(bbox2)
             self._insert("mergedbox",bbox3)
 
+    def recursivehash(self):
+        return self._recursivehash()
+
 
 ######THIS IS THE ABSOLOUTE MAIN FUNCTION############
     def insertblock(self,item,bbox):
@@ -460,7 +530,6 @@ class Index(_QuadTree):
             print ([i for i in result])
 
 
-#######ALWAYS CALL THIS ##############
     def intersect(self, bbox):
         """
         Intersects an input boundingbox rectangle with all of the items
@@ -477,33 +546,6 @@ class Index(_QuadTree):
     def transfer(self,bbox,newowner):
         self._transfer(bbox,newowner)
 
-def main():
-    spindex=Index(bbox=(0,0,1000,1000))
-    spindex.hash="000"
-    print "enter property name "
-    propertyname=str(raw_input())
-    print "Enter property dimensions in tuple format"
-    unformedinput=raw_input()
-    dimensions=tuple(int(x.strip()) for x in unformedinput.split(','))
-    result=spindex.intersect(dimensions)
-    if not result:
-        a=[str(spindex.hash),str(unformedinput),str(propertyname)]
-        b=":".join(a)
-        b=str(b)
-        print(type(b))
-        response=muterun_js("transaction.js",b)
-        #print response.stdout
-        spindex.insert(response.stdout,dimensions)
-        print ("Property Sucessfully inserted"+str(dimensions)+propertyname)
-        spindex.hashcal()
-    else:
-        print ("There is an intersection with")
-        print ([i for i in result])
-
-def test():
-    sp=Index(bbox=(0,0,20,20))
-    for i in range(20):
-        sp.insert(i,(i,i,i+1,i+1))
 
 ##THIS IS A TEST INSERTION FUNCTION
 def insertontoblockchain(what):
@@ -579,11 +621,6 @@ def insertthroughnodejs(a):
     test1=re.match("AssetID(.*)AssetEND",response.stdout)
     print test1.group(1)
     Obtained_Asset_ID=test.group(1)
-    #test2=re.match("AssetID(.*)AssetEND",response.stdout)
-
-    #regex=r"\[(.*?)\]"
-    #matchobj=re.search(regex,response.stdout)
-    #print (matchobj.group(1))
 
 
 def joinverifier(bbox1,bbox2,bbox3=(0,0,0,0)):
@@ -611,15 +648,6 @@ def joinverifier(bbox1,bbox2,bbox3=(0,0,0,0)):
 
         netbox=(newx1,newy1,newx2,newy2)
         return netbox
-
-
-
-
-
-
-
-
-
 
 
 
