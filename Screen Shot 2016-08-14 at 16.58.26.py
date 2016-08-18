@@ -2,13 +2,13 @@ from pyqtree import *
 import time
 import math
 arr={}
-numbers=[1,10,100,1000,10000]
+numbers=[100]
 for n in numbers:
 	sp=Index(bbox=(0,0,n+1,n+1))
 	t0=time.time()
 	value=int(math.ceil(0.75*n))
 	print value,n
-	for i in range(1,n,2):
+	for i in range(value,n,2):
 		sp.insert(i,(i,i,i+1,i+1))
 	t1=time.time()
 	total=t1-t0

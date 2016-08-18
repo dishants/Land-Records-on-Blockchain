@@ -185,20 +185,20 @@ class _QuadTree(object):
             node.recompute_hash()
             self.hashcal()
 
-            print "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-            print("Appended the QuadNode to the tree --Line 141")
-            print rect
-            print item
-            print "\n"
+            ##print "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+            ##print("Appended the QuadNode to the tree --Line 141")
+            ##print rect
+            ##print item
+            ##print "\n"
 
             
             if len(self.nodes) > self.max_items and self._depth < self.max_depth:
                 self._split()
-                print("Here the nodes were split")
+                ##print("Here the nodes were split")
         else:
-            print "Now inserting into children"
+            ##print "Now inserting into children"
             self._insert_into_children(item, rect)
-            print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+            ##print ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
                      
    
 
@@ -283,8 +283,8 @@ class _QuadTree(object):
             rect[1] <= self.center[1] and rect[3] >= self.center[1]):
             node = _QuadNode(item, rect,self)
             node.recompute_hash()
-            print " Start of --------------------------------------------------------------"
-            print "This is insertintocildren and here the QuadNode is being appended to it"
+            ##print " Start of --------------------------------------------------------------"
+            ##print "This is insertintocildren and here the QuadNode is being appended to it"
             self.nodes.append(node)
             node.hashcal()
         else:
@@ -292,33 +292,33 @@ class _QuadTree(object):
             if rect[0] <= self.center[0]:
                 if rect[1] <= self.center[1]:
                     self.children[0]._insert(item, rect)
-                    print ("executed insertintochildren and added to the first if")
-                    print item
-                    print rect
+                    ##print ("executed insertintochildren and added to the first if")
+                    ##print item
+                    ##print rect
                 if rect[3] >= self.center[1]:
                     self.children[1]._insert(item, rect)
-                    print ("executed insertintochildren and added to the second if")
-                    print item
-                    print rect
+                    ##print ("executed insertintochildren and added to the second if")
+                    ##print item
+                    ##print rect
 
             if rect[2] > self.center[0]:
                 if rect[1] <= self.center[1]:
                     self.children[2]._insert(item, rect)
-                    print ("executed insertintochildren and added to the third if" )
-                    print item
-                    print rect
+                    ##print ("executed insertintochildren and added to the third if" )
+                    ##print item
+                    ##rint rect
 
                 if rect[3] >= self.center[1]:
                     self.children[3]._insert(item, rect)
-                    print ("print executed insertintochildren and added to the third if")
-                    print item
-                    print rect
-        print "---------------------------------------End of insertintochildren-----------------------"
+                    ##print ("print executed insertintochildren and added to the third if")
+                    ##print item
+                    ##print rect
+        ##print "---------------------------------------End of insertintochildren-----------------------"
         
 
                     
     def _split(self):
-        print "Split starts {{{{{{{{{{{{{{{{{{{{{{{{{{{"
+        ##print "Split starts {{{{{{{{{{{{{{{{{{{{{{{{{{{"
         quartwidth = self.width / 4.0
         quartheight = self.height / 4.0
         halfwidth = self.width / 2.0
@@ -337,14 +337,14 @@ class _QuadTree(object):
                          _QuadTree(x2, y2, halfwidth, halfheight,
                                    self.max_items, self.max_depth, self,new_depth)]
         nodes = self.nodes
-        print "The actual splitting operation"
+        ##print "The actual splitting operation"
         self.nodes = []
         for node in nodes:
-            print("Here insert_into_children under split is called on ")
-            print node.item
-            print node.rect
+            ##print("Here insert_into_children under split is called on ")
+            #print node.item
+            #print node.rect
             self._insert_into_children(node.item, node.rect)
-        print "Split ends }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
+        #print "Split ends }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
 
     def __len__(self):
         """
