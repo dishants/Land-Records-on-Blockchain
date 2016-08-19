@@ -520,6 +520,7 @@ class Index(_QuadTree):
             print b
             b=b.replace(' ','-')
             response=muterun_js("transaction.js",b)
+            print response.stdout
             test1=re.match("AssetID(.*)AssetEND",response.stdout)
             Obtained_Asset_ID=test1.group(1)
             self.insert(Obtained_Asset_ID,bbox)
@@ -563,8 +564,7 @@ def insertontoblockchain(what):
     'amount': 1,
     'divisibility': 0,
     'fee': 5000,
-    'reissueable':'false',
-    'metadata' : a}
+    'reissueable':'false'}
     r=requests.post(issueurl,data=asset)
     reply=r.json()
     print(reply)
@@ -598,9 +598,7 @@ def completeinsert():
     'divisibility': 0,
     'fee': 5000,
     'reissueable':'false',
-    'metadata.assetName': 'Dishant',
-    'metadata.issuer': 'Genius',
-    'metadata.description': '0,0,5,5 Hash 20fd37c942f0f95b0a2215f336ba298438f3a0a5b11e6ae9c4f71ecb'
+  
     }
 
     r=requests.post(issueurl,data=assetin)
@@ -617,11 +615,10 @@ def completeinsert():
 def insertthroughnodejs(a):
     print("Going through the insertion function")
     response=muterun_js("transaction.js",a)
-    print (response.stdout)
     test1=re.match("AssetID(.*)AssetEND",response.stdout)
-    print test1.group(1)
-    Obtained_Asset_ID=test.group(1)
-
+    print (response.stdout)
+    Obtained_Asset_ID=test1.group(1)
+    print Obtained_Asset_ID
 
 def joinverifier(bbox1,bbox2,bbox3=(0,0,0,0)):
     (ax1,ay1,ax2,ay2)=bbox1
