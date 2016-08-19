@@ -2,7 +2,7 @@ from pyqtree import *
 import time
 import math
 import random
-numbers=[10,100,1000,10000]
+numbers=[10,50,100,500,1000,5000,10000]
 
 #This is a test case of a single quadrant where items are focussed
 def skewedinsertion():
@@ -33,22 +33,29 @@ def skewedinsertion():
 	print coordinates
 
 #uniform insertion blocks of 1x1
-def insertion():
+def main():
 	arr={}
 	intersectiontime={}
-	coordinates={}
+	largeintersectiontime={}
+	singleinsert={}
+	fixedinsert={}
+	fixedintersection={}
+
+
+
 	for n in numbers:
 		sp=Index(bbox=(0,0,n+1,n+1))
 		t0=time.time()
-		value=int(math.ceil(0.75*n))
-		print value,n
-		for i in range(1,n,2):
+		##value=int(math.ceil(0.75*n))
+		for i in range(1,n):
 			sp.insert(i,(i,i,i+1,i+1))
 		t1=time.time()
 		total=t1-t0
 		arr[n]=total
 
 		a=random.randrange(0,n)
+		b=random.randrange(0,n)
+
 
 		t3=time.time()
 		sp.intersect((a,a,a+1,a+1))
@@ -56,63 +63,49 @@ def insertion():
 		totalinter=t4-t3
 		intersectiontime[n]=(totalinter,a)
 
-	print arr
-	print intersectiontime
-	print coordinates
 
-def largeintersection():
-	arr={}
-	intersectiontime={}
-	coordinates={}
-	for n in numbers:
-		sp=Index(bbox=(0,0,n+1,n+1))
-		t0=time.time()
-		for i in range(1,n,2):
-			sp.insert(i,(i,i,i+1,i+1))
-		t1=time.time()
-		total=t1-t0
-		arr[n]=total
-
-		a=random.randrange(0,n)
-		b=random.randrange(0,n)
-
-		t3=time.time()
+		t5=time.time()
 		sp.intersect((a,a,b,b))
-		t4=time.time()
-		totalinter=t4-t3
+		t6=time.time()
+		totallargeintersectiontime=t6-t5
+		largeintersectiontime[n]=(totallargeintersectiontime,a,b)
+
+		t7=time.time()
+		sp.insert("ss",(n-2,n-2,n-1,n-1))
+		t8=time.time()
+		totalsingleinsert=t8-t7
+		singleinsert[n]=totalsingleinsert
+
+		t9=time.time()
+		sp.insert("ii",(3,3,5,5))
+		t10=time.time()
+		fixedinsert=t10-t9
+		fixedintersection[n]=fixedinsert
 
 
-		intersectiontime[n]=(totalinter,a,b)
 
+
+	print "These are timings for Uniform Insertions"
 	print arr
+	print "\n"
+	print "This is the intersection Time with a randon 1x1 element"
 	print intersectiontime
+	print "\n"
+	print "This is intersection with a random large block"
+	print largeintersectiontime
+	print "\n"
 
-def fixedintersection():
-	arr={}
-	intersectiontime={}
-	coordinates={}
-	for n in numbers:
-		sp=Index(bbox=(0,0,n+1,n+1))
-		t0=time.time()
-		value=int(math.ceil(0.75*n))
-		print value,n
-		for i in range(1,n,2):
-			sp.insert(i,(i,i,i+1,i+1))
-		t1=time.time()
-		total=t1-t0
-		arr[n]=total
+	print "This is the insertion time for a fixed insert of 3,3,5,5"
+	print fixedintersection
+	print '\n'
 
-		a=random.randrange(0,n)
-		b=random.randrange(0,n)
+	print "time for a singe insert post build"
+	print singleinsert
 
-		t3=time.time()
-		sp.intersect((3,3,5,5))
-		t4=time.time()
-		totalinter=t4-t3
-		intersectiontime[n]=(totalinter,a,b)
 
-	print arr
-	print intersectiontime
+
+
+
 
 
 def randomitems():
@@ -140,3 +133,7 @@ def pushtiming():
 
 #skewed {1000: 0.030871868133544922, 10000: 0.3902149200439453, 10: 6.29425048828125e-05, 100: 0.0042629241943359375}
 #{1000: 0.03163790702819824, 10000: 0.3713109493255615, 10: 6.103515625e-05, 100000: 5.713748931884766, 100: 0.0018301010131835938}
+
+
+if __name__ == "__main__":
+    main()
